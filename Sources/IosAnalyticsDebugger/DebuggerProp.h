@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithId:(NSString *)id withName:(NSString *)name withValue:(id)value;
 
+- (instancetype)initWithName:(NSString *)name withValue:(id)value;
+
 @end
 
 NS_ASSUME_NONNULL_END

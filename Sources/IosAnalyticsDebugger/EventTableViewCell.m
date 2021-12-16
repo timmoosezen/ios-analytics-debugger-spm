@@ -32,8 +32,7 @@
     
     [self.mainRow addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleExpend)]];
 
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
     UINib *eventSecondatyRowItemNib = [UINib nibWithNibName:@"EventTableViewSecondaryCell" bundle:resBundle];
     [self.additionalRows registerNib:eventSecondatyRowItemNib forCellReuseIdentifier:@"EventTableViewSecondaryCell"];
     [self.additionalRows setDataSource:self];
@@ -73,8 +72,7 @@
         [self layoutIfNeeded];
         [self setNeedsUpdateConstraints];
         
-        NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-        NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+        NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
         [self.expendCollapseImage setImage:[UIImage imageNamed:@"avo_debugger_collapse_arrow" inBundle:resBundle compatibleWithTraitCollection:nil]];
     }
 }
@@ -86,16 +84,14 @@
         
         [self layoutIfNeeded];
         [self setNeedsUpdateConstraints];
-        
-        NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-        NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+
+        NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
         [self.expendCollapseImage setImage:[UIImage imageNamed:@"expend_arrow" inBundle:resBundle compatibleWithTraitCollection:nil]];
     }
 }
 
 - (void) showError:(BOOL) isError {
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
     if (isError) {
         [self.eventName setTextColor:[UIColor colorWithRed:0.851 green:0.271 blue:0.325 alpha:1]]; //@"error_color"
         [self.statusIcon setImage:[UIImage imageNamed:@"red_warning" inBundle:resBundle compatibleWithTraitCollection:nil]];

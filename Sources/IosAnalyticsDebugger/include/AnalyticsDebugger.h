@@ -26,6 +26,7 @@ static OnNewEventCallback onNewEventCallback;
 -(void) showBubbleDebugger;
 -(void) hideDebugger;
 -(void) publishEvent:(NSString *) eventName withParams:(NSDictionary *) params;
+-(void) debugEvent:(NSString *) eventName eventParams:(NSDictionary<NSString *, id> *) props;
 -(void) publishEvent:(NSString *) eventName withTimestamp:(NSNumber *) timestamp withProperties:(NSArray<DebuggerProp *> *) props withErrors:(NSArray<DebuggerPropError *> *) errors;
 -(BOOL) isEnabled;
 -(void) setSchemaId:(NSString *) schemaId;

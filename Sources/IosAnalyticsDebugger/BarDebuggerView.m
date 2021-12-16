@@ -42,8 +42,7 @@
 }
 
 -(void)loadViewFromNib {
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
     UINib *nib = [UINib nibWithNibName:@"BarDebugger" bundle:resBundle];
     NSArray *views = [nib instantiateWithOwner:self options:nil];
     UIView *view = [views objectAtIndex:0];
@@ -67,8 +66,7 @@
 }
 
 - (void) setError:(BOOL) hasError {
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
     if (hasError) {
         [self.statusIcon setImage:[UIImage imageNamed:@"white_warning" inBundle:resBundle compatibleWithTraitCollection:nil]];
         [self.dragHandle setImage:[UIImage imageNamed:@"drag_handle" inBundle:resBundle compatibleWithTraitCollection:nil]];

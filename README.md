@@ -14,7 +14,7 @@ Swift
 
     let debugger = AnalyticsDebugger()
     
-Remeber to keep a reference to the `AnalyticsDebugger` instance somewhere, for example in your app delegate. Otherwise it will become unresponsive to touches.
+> Remeber to keep a reference to the `AnalyticsDebugger` instance somewhere, for example in your app delegate. Otherwise it will become unresponsive to touches.
 
 # Show the debugger
 
@@ -47,25 +47,18 @@ Swift
 # Post an event
 
 Obj-C
-
-    NSMutableArray * props = [NSMutableArray new];
-
-    [props addObject:[[DebuggerProp alloc] initWithId:@"id0" withName:@"id0 event" withValue:@"value 0"]];
-    [props addObject:[[DebuggerProp alloc] initWithId:@"id1" withName:@"id1 event" withValue:@"value 1"]];
-
-    NSMutableArray * errors = [NSMutableArray new];
-
-    [errors addObject:[[DebuggerPropError alloc] initWithPropertyId:@"id0" withMessage:@"error in event id0"]];
-
-    [debugger publishEvent:@"Test Event" withTimestamp:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]]
-        withProperties:props withErrors:errors];
+    
+    [self.debugger debugEvent:@"Test Event" eventParams: @{
+        @"Parameter 0" : @"Value 0",
+        @"Parameter 1" : @"Value 1"
+    }];
         
 Swift
 
-    debugger.publishEvent("Test Event", withTimestamp: NSNumber(value: NSDate().timeIntervalSince1970),
-        withProperties: [DebuggerProp(id: "id0", withName: "prop 0", withValue: "value 0"), 
-                         DebuggerProp(id: "id1", withName: "prop 1", withValue: "value 1")], 
-        withErrors: [DebuggerPropError(propertyId: "id0", withMessage: "error in event with id0")]);
+    debugger.debugEvent("Test Event", eventParams: [
+        "Parameter 0": "Value 0", 
+        "Parameter 1": "Value 1"
+    ])
 
 # Using with Avo
 

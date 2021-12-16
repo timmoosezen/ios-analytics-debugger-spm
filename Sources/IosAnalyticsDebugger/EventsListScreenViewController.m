@@ -31,8 +31,7 @@
     self.expendedEvents = [NSMutableSet new];
     [self populateExpended];
     
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
     UINib *eventItemNib = [UINib nibWithNibName:@"EventTableViewCell" bundle:resBundle];
       
     [self.eventsTableView registerNib:eventItemNib forCellReuseIdentifier:@"EventTableViewCell"];

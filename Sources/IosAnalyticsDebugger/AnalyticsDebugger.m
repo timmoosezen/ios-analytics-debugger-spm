@@ -5,6 +5,7 @@
 //  Copyright © 2019. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "AnalyticsDebugger.h"
 #import "BubbleDebuggerView.h"
 #import "BarDebuggerView.h"
@@ -145,8 +146,7 @@ NSString *currentSchemaId;
             
             UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
             
-            NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-            NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+            NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
             
             EventsListScreenViewController *eventsListViewController = [[EventsListScreenViewController alloc] initWithNibName:@"EventsListScreenViewController" bundle:resBundle];
             [eventsListViewController setModalPresentationStyle:UIModalPresentationFullScreen];
@@ -169,6 +169,23 @@ NSString *currentSchemaId;
     dispatch_async(dispatch_get_main_queue(), ^(void){
         currentSchemaId = schemaId;
     });
+}
+
+- (void) debugEvent:(NSString *) eventName eventParams:(NSDictionary<NSString *, id> *) props {
+    
+    DebuggerEventItem * event = [DebuggerEventItem new];
+    
+    event.name = eventName;
+    event.timestamp = [[NSDate date] timeIntervalSince1970];
+    event.messages = [NSMutableArray new];
+    event.eventProps = [NSMutableArray new];
+    for (NSString *propName in  props) {
+        if (propName != nil) {
+            [event.eventProps addObject:[[DebuggerProp alloc] initWithName:propName withValue:props[propName]]];
+        }
+    }
+    
+    [self sendEventToAnalyticsDebugger:event];
 }
 
 - (void) publishEvent:(NSString *) eventName withTimestamp:(NSNumber *) timestamp withProperties:(NSArray<DebuggerProp *> *) props withErrors:(NSArray<DebuggerPropError *> *) errors {

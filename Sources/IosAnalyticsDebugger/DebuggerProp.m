@@ -20,4 +20,15 @@
     return self;
 }
 
+- (instancetype)initWithName:(NSString *)name withValue:(id)value;
+{
+    self = [super init];
+    if (self) {
+        self.id = [[NSUUID UUID] UUIDString];
+        self.name = name;
+        self.value = value;
+    }
+    return self;
+}
+
 @end

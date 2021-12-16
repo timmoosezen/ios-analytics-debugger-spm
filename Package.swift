@@ -18,7 +18,7 @@ let package = Package(
             name: "IosAnalyticsDebugger",
             dependencies: [],
             resources: [
-                .process("resources/Assets.xcassets"),
+                .process("resources/AvoAssets.xcassets"),
                 .process("resources/BarDebugger.xib"),
                 .process("resources/BubbleDebuggerXIB.xib"),
                 .process("resources/EventsListScreenViewController.xib"),

@@ -43,8 +43,7 @@
 }
 
 -(void)loadViewFromNib {
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
     UINib *nib = [UINib nibWithNibName:@"BubbleDebuggerXIB" bundle:resBundle];
     NSArray *views = [nib instantiateWithOwner:self options:nil];
     UIView *view = [views objectAtIndex:0];
@@ -69,8 +68,7 @@
 }
 
 - (void) setError:(BOOL) hasError {
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"IosAnalyticsDebugger.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
     if (hasError) {
         [self.bubble setImage:[UIImage imageNamed:@"avo_bubble_error" inBundle:resBundle compatibleWithTraitCollection:nil]];
         [self.counterBackground setImage:[UIImage imageNamed:@"badge_white" inBundle:resBundle compatibleWithTraitCollection:nil]];

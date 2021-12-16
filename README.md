@@ -2,7 +2,7 @@
 
 ## Installation
 
-This is the Swift Package Manager repo, you can also use Analytics Debugger via Cocoapods
+This is the Swift Package Manager repo, you can also use Analytics Debugger via [Cocoapods](https://github.com/avohq/ios-analytics-debugger)
 
 # Create the debugger instance
 

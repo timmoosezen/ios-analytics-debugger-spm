@@ -78,7 +78,7 @@ Swift
 
 # Using with Avo Functions
 
-When using Avo generated code you'll be calling the `init` methods. Actual interface of the methods depends on your schema setup, but there will be init methods with `debugger` parameter, where you can pass an instance of `AnalyticsDebugger`.
+When using Avo generated code you'll be calling the `init` methods. Actual interface of the methods depends on your schema setup, but there will be init or constructor method with `debugger` parameter, where you can pass an instance of `AnalyticsDebugger`.
 
 Obj-C
 
@@ -86,7 +86,7 @@ Obj-C
 
 Swift
 
-    Avo.initAvo(env: AvoEnv.dev, ..., debugger: debugger)
+    avo = Avo(env: .dev, ..., debugger: debugger)
 
 After that all events from Avo function calls will be automatically accessable in the debugger UI.
 

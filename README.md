@@ -60,7 +60,23 @@ Swift
         "Parameter 1": "Value 1"
     ])
 
-# Using with Avo
+# Using with Avo Inspector
+
+We suggest to include the Analytics Debugger to you development and staging builds and call it alongside Inspector.
+
+Place the `debugger.debugEvent` call right after the `inspector.trackSchemaFromEvent` call. The parameters of the calls are the same, so you can do
+
+Obj-C
+
+    [self.inspector trackSchemaFromEvent:eventName eventParams:params];
+    [self.debugger debugEvent:eventName eventParams:params];
+
+Swift
+
+    inspector.trackSchema(fromEvent:eventName, eventParams:params)
+    debugger.debugEvent(eventName, eventParams:params)
+
+# Using with Avo Functions
 
 When using Avo generated code you'll be calling the `init` methods. Actual interface of the methods depends on your schema setup, but there will be init methods with `debugger` parameter, where you can pass an instance of `AnalyticsDebugger`.
 

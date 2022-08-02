@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "AnalyticsDebugger.h"
+#import "PassthroughWindow.h"
 #import "BubbleDebuggerView.h"
 #import "BarDebuggerView.h"
 #import "EventsListScreenViewController.h"
@@ -17,7 +18,9 @@
 #import <Foundation/Foundation.h>
 #import "DebuggerAnalytics.h"
 #import "DebuggerAnalyticsDestination.h"
+#import "PassthroughViewController.h"
 
+static UIWindow *debuggerWindow = nil;
 static UIView<DebuggerView> *debuggerView = nil;
 
 @interface AnalyticsDebugger ()
@@ -51,30 +54,27 @@ NSString *currentSchemaId;
     if (debuggerView != nil) {
         [self hideDebugger];
     }
-    
+
     dispatch_async(dispatch_get_main_queue(), ^(void){
         CGRect screenRect = [[UIScreen mainScreen] bounds];
         CGFloat screenWidth = screenRect.size.width;
         screenHeight = screenRect.size.height;
-         
-        NSInteger bottomOffset = [Util barBottomOffset];
-    
-        debuggerView = [[BarDebuggerView alloc] initWithFrame: CGRectMake(0, screenHeight - 30 - bottomOffset, screenWidth, 30) ];
 
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-               [[[UIApplication sharedApplication] keyWindow] addSubview:debuggerView];
-        });
-         
+        NSInteger bottomOffset = [Util barBottomOffset];
+
+        debuggerView = [[BarDebuggerView alloc] initWithFrame: CGRectMake(0, screenHeight - 52 - bottomOffset, screenWidth, 52) ];
+
+        [self showDebuggerViewInWindow];
+
         self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget: self action:@selector(drugBar:)];
-        
+
         [debuggerView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openEventsListScreen)]];
         [debuggerView addGestureRecognizer:self.panGestureRecognizer];
-        
+
         if ([analyticsDebuggerEvents count] > 0) {
             [debuggerView showEvent:[analyticsDebuggerEvents objectAtIndex:0]];
         }
-        
+
         [DebuggerAnalytics debuggerStartedWithFrameLocation:nil schemaId:currentSchemaId];
     });
 }
@@ -85,8 +85,9 @@ NSString *currentSchemaId;
     CGFloat statusBarHeight = [Util statusBarHeight];
     NSInteger bottomOffset = [Util barBottomOffset];
     
-    CGFloat newY = MIN(debuggerView.center.y + translation.y, screenHeight - bottomOffset);
-    newY = MAX(statusBarHeight + (CGRectGetHeight(debuggerView.bounds) / 2), newY);
+    CGFloat barHalfHeight = CGRectGetHeight(debuggerView.bounds) / 2;
+    CGFloat newY = MIN(debuggerView.center.y + translation.y, screenHeight - bottomOffset - barHalfHeight);
+    newY = MAX(statusBarHeight + barHalfHeight, newY);
     debuggerView.center = CGPointMake(debuggerView.center.x, newY);
     [sender setTranslation:CGPointZero inView:debuggerView];
 }
@@ -103,11 +104,8 @@ NSString *currentSchemaId;
         NSInteger bottomOffset = [Util barBottomOffset];
         
         debuggerView = [[BubbleDebuggerView alloc] initWithFrame: CGRectMake(screenWidth - 40, screenHeight - 80 - bottomOffset, 40, 40)];
-        
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
-           dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-               [[[UIApplication sharedApplication] keyWindow] addSubview:debuggerView];
-        });
+
+        [self showDebuggerViewInWindow];
          
         self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget: self action:@selector(drugBubble:)];
          
@@ -123,17 +121,39 @@ NSString *currentSchemaId;
     });
 }
 
+- (void) showDebuggerViewInWindow {
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        debuggerWindow = [[PassthroughWindow alloc] init];
+        debuggerWindow.frame = screenRect;
+        debuggerWindow.windowLevel = UIWindowLevelStatusBar;
+        debuggerWindow.backgroundColor = [UIColor clearColor];
+        UIViewController *rootVC = [[PassthroughViewController alloc] init];
+        [rootVC loadViewIfNeeded];
+        rootVC.view.backgroundColor = [UIColor clearColor];
+        debuggerWindow.rootViewController = rootVC;
+        [rootVC.view addSubview:debuggerView];
+        if (@available(iOS 13.0, *)) {
+            debuggerWindow.windowScene = [[[UIApplication sharedApplication] keyWindow] windowScene];
+        }
+        [debuggerWindow setHidden:NO];
+    });
+}
+
 - (void) drugBubble:(UIPanGestureRecognizer*)sender {
     CGPoint translation = [sender translationInView:debuggerView];
     
     CGFloat statusBarHeight = [Util statusBarHeight];
     NSInteger bottomOffset = [Util barBottomOffset];
     
-    CGFloat newY = MIN(debuggerView.center.y + translation.y, screenHeight - bottomOffset);
-    newY = MAX(statusBarHeight + (CGRectGetHeight(debuggerView.bounds) / 2), newY);
+    CGFloat bubbleHalfHeight = CGRectGetHeight(debuggerView.bounds) / 2;
+    CGFloat bubbleHalfWidth = (CGRectGetWidth(debuggerView.bounds) / 2);
+    CGFloat newY = MIN(debuggerView.center.y + translation.y, screenHeight - bottomOffset - bubbleHalfHeight);
+    newY = MAX(statusBarHeight + bubbleHalfHeight, newY);
     
-    CGFloat newX = MIN(debuggerView.center.x + translation.x, screenWidth);
-    newX = MAX((CGRectGetWidth(debuggerView.bounds) / 2), newX);
+    CGFloat newX = MIN(debuggerView.center.x + translation.x, screenWidth - bubbleHalfWidth);
+    newX = MAX(bubbleHalfWidth, newX);
     
     debuggerView.center = CGPointMake(newX, newY);
     [sender setTranslation:CGPointZero inView:debuggerView];
@@ -144,7 +164,7 @@ NSString *currentSchemaId;
         if (debuggerView != nil) {
             [debuggerView onClick];
             
-            UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+            UIViewController *rootViewController = debuggerWindow.rootViewController;
             
             NSBundle *resBundle = SWIFTPM_MODULE_BUNDLE;
             
@@ -161,6 +181,10 @@ NSString *currentSchemaId;
         if (debuggerView != nil) {
             [debuggerView removeFromSuperview];
             debuggerView = nil;
+        }
+        if (debuggerWindow != nil) {
+            [debuggerWindow setHidden:YES];
+            debuggerWindow = nil;
         }
     });
 }

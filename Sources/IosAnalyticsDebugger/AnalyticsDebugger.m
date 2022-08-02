@@ -127,7 +127,7 @@ NSString *currentSchemaId;
         CGRect screenRect = [[UIScreen mainScreen] bounds];
         debuggerWindow = [[PassthroughWindow alloc] init];
         debuggerWindow.frame = screenRect;
-        debuggerWindow.windowLevel = UIWindowLevelStatusBar;
+        debuggerWindow.windowLevel = UIWindowLevelAlert;
         debuggerWindow.backgroundColor = [UIColor clearColor];
         UIViewController *rootVC = [[PassthroughViewController alloc] init];
         [rootVC loadViewIfNeeded];

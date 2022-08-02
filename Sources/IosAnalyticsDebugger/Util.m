@@ -27,23 +27,26 @@
 }
 
 + (NSInteger) barBottomOffset {
-    BOOL hasNotch = [self statusBarHeight] > 24.0;
-    
-    if (hasNotch) {
-        return 30;
+    if (@available(iOS 11.0, *)) {
+        return [UIApplication sharedApplication].keyWindow.safeAreaInsets.bottom;
     } else {
-        return 0;
+        BOOL hasNotch = [self statusBarHeight] > 24.0;
+        if (hasNotch) {
+            return 30;
+        } else {
+            return 0;
+        }
     }
 }
 
 + (CGFloat) statusBarHeight {
-    CGSize statusBarSize;
-    if (@available(iOS 13.0, *)) {
-        statusBarSize = [[[[UIApplication sharedApplication].keyWindow windowScene] statusBarManager] statusBarFrame].size;
+    if (@available(iOS 11.0, *)) {
+        return [UIApplication sharedApplication].keyWindow.safeAreaInsets.top;
     } else {
+        CGSize statusBarSize;
         statusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
+        return MIN(statusBarSize.width, statusBarSize.height);
     }
-    return MIN(statusBarSize.width, statusBarSize.height);
 }
 
 @end
